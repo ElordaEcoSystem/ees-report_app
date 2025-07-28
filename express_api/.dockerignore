@@ -1,0 +1,38 @@
+# Node.js
+node_modules
+npm-debug.log
+yarn-error.log
+# .env
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+*.sqlite
+
+# Logs
+logs
+*.log
+
+# Build output
+dist
+build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker artifacts
+Dockerfile
+docker-compose.yml
+
+# IDE/Editor
+.vscode
+.idea
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
