@@ -38,8 +38,9 @@ export function LoginForm() {
       const response = await fetchLogin(data);
       localStorage.setItem("token", response.token);
       navigate("/board");
+      throw new Error("ouch!");
     } catch (error) {
-      console.error("Ошибка входа:", error.message);
+      console.error("Ошибка входа:", error);
     }
   });
   return (

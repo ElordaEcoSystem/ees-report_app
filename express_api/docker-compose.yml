@@ -25,7 +25,7 @@ services:
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: mydatabase
   react-app: # React-приложение
-    build: ../react-threads # Путь к вашему React-приложению относительно корня вашего проекта
+    build: ../react-client # Путь к вашему React-приложению относительно корня вашего проекта
     ports:
       - "80:80" # Порт, на котором будет доступно ваше React-приложение
       - "8000:8000" # Порт, на котором будет доступно ваше React-приложение

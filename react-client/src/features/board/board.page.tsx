@@ -139,7 +139,7 @@ export function Board() {
           <div className="flex gap-4">
             <Select
               onValueChange={(value) => {
-                setSelectedMonth(value);
+                setSelectedMonth(Number(value));
               }}
             >
               <SelectTrigger className="w-[180px]">
