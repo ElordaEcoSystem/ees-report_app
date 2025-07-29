@@ -8,6 +8,7 @@ services:
       - "3000:3000"
     depends_on:
       - db
+      - react-app
     environment:
       DATABASE_URL: "postgresql://postgres:pass@db:5432/mydatabase"
     command: >
@@ -23,3 +24,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: mydatabase
+  react-app: # React-приложение
+    build: ../react-threads # Путь к вашему React-приложению относительно корня вашего проекта
+    ports:
+      - "80:80" # Порт, на котором будет доступно ваше React-приложение
+      - "8000:8000" # Порт, на котором будет доступно ваше React-приложение
+volumes:
+  react_app: # Объявление именованного тома
