@@ -6,5 +6,13 @@ node_modules
 
 /generated/prisma
 
-/uploads
-/temp
+# Игнорировать всё в uploads
+uploads/*
+temp/*
+
+# Но не игнорировать саму папку и .gitkeep
+!uploads/
+!uploads/.gitkeep
+
+!temp/
+!temp/.gitkeep
