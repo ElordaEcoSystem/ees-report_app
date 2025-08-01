@@ -2,7 +2,11 @@ const { prisma } = require("../prisma/prisma-client");
 const fs = require("fs");
 const fsp = require("fs/promises");
 const path = require("path");
-const { createCanvas, loadImage } = require("canvas");
+const { createCanvas, loadImage,registerFont } = require("canvas");
+
+registerFont(path.join(__dirname, "../assets/fonts/ArialRegular.ttf"), {
+  family: "Arial",
+});
 
 const uploadDir = path.join(__dirname, "../uploads");
 const assetsDir = path.join(__dirname, "../assets");
@@ -52,7 +56,7 @@ async function imageHandler({
   const bannerHeightStart = targetHeight - bannerHeight;
   ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
   ctx.fillRect(0, bannerHeightStart, targetWidth, bannerHeight);
-  ctx.font = " 40px sans-serif";
+  ctx.font = "40px Arial"
   ctx.fillStyle = "white";
   ctx.fillText(`Объект: ${object}`, 30, bannerHeightStart + 60);
   ctx.fillText(`Исполнитель: ${userName}`, 30, bannerHeightStart + 110);
@@ -74,38 +78,6 @@ async function imageHandler({
 // addLogoAndText().catch(console.error);
 
 const WorkLogController = {
-  // createWorkLog: async (req, res) => {
-  //   const userId = req.user.userId;
-  //   const { object, content } = req.body;
-
-  //   if (!object || !content) {
-  //     return res.status(400).json({ error: "Все поля обязательны" });
-  //   }
-
-  //   let photoUrl = null;
-  //   if (req.file) {
-  //     photoUrl = `/uploads/${req.file.filename}`; // Путь, по которому фронт может его получить
-  //   } else {
-  //     return res.status(400).json({ error: "Все поля обязательны" });
-  //   }
-
-  //   try {
-  //     console.log("USER", req.user);
-
-  //     const workLog = await prisma.workLog.create({
-  //       data: {
-  //         object,
-  //         content,
-  //         photoUrl,
-  //         authorId: userId,
-  //       },
-  //     });
-  //     res.json(workLog);
-  //   } catch (error) {
-  //     console.error("Create WorkLog error:", error); // <-- теперь ты увидишь реальную ошибку
-  //     return res.status(500).json({ error: "Internal server error" });
-  //   }
-  // },
   createWorkLog: async (req, res) => {
     const userId = req.user.userId;
     const userName = req.user.fullName;
