@@ -1,30 +1,29 @@
 #Используем образ линукс Alpine node 14
 FROM node:20.19.3-bookworm-slim
 
-#Указываем рабочую директорию
+# Указываем нашу рабочую дерикторию
 WORKDIR /app
 
-#Скоприровать package.json и package-lock.json внутрь контейнера
+# Копируем package.json и package-lock.json внутрь контейнера
 COPY package*.json ./
 
-# RUN apt-get update -y && apt-get install -y openssl
-
-#Устанавливаем зависимости
+# Устанавливаем зависимости
 RUN npm install
 
-#Копируем оставшиеся приложения в контейнер
+# Копируем оставшееся приложение в контейнер
 COPY . .
 
-#Установить Prisma
-# RUN npm install -g prisma
+# Устанавливаем Prisma
+RUN npm install -g prisma
 
-#Генерируем prisma client
-# COPY prisma/schema.prisma ./prisma/
+# Генерируем Prisma client
+RUN prisma generate
 
-RUN npx prisma generate
+# Копируем Prisma schema и URL базы данных в контейнер
+COPY prisma/schema.prisma ./prisma/
 
-#prisma schema
+# Открываем порт 3000 в нашем контейнере
+EXPOSE 3000
 
-# EXPOSE 3000
-
-CMD ["npm","start"]
+# Запускаем сервер
+CMD [ "npm", "start" ]

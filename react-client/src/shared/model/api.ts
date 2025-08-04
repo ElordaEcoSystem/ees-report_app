@@ -7,7 +7,7 @@ type Login = {
 };
 
 export async function fetchLogin(data: Login) {
-  const response = await fetch(`${BASE_API_URL}/api/login`, {
+  const response = await fetch(`${BASE_API_URL}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -33,7 +33,7 @@ export async function fetchWorkLogList(): Promise<WorkLog[]> {
   const token = localStorage.getItem("token"); // или откуда ты его хранишь
 
   try {
-    const response = await fetch(`${BASE_API_URL}/api/worklogs`, {
+    const response = await fetch(`${BASE_API_URL}/worklogs`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export const fetchCreateWorkLog = async (data: PostWorkLog) => {
   formData.append("content", data.content);
   formData.append("photo", data.photo); // File сюда
   try {
-    const response = await fetch(`${BASE_API_URL}/api/worklogs`, {
+    const response = await fetch(`${BASE_API_URL}/worklogs`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
