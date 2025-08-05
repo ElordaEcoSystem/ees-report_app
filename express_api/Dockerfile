@@ -23,7 +23,6 @@ RUN prisma generate
 COPY prisma/schema.prisma ./prisma/
 
 # Открываем порт 3000 в нашем контейнере
-EXPOSE 3000
-
+EXPOSE 4000
 # Запускаем сервер
 CMD [ "npm", "start" ]

@@ -1,10 +1,10 @@
 version: "3.8"
 
 services:
-  backend: # Сервер Express
+  backend:
     build: .
-    ports:
-      - "4000:4000"
+    expose:
+      - "4000"
     depends_on:
       - db
       - frontend
@@ -13,8 +13,10 @@ services:
       PORT: 4000
     command: >
       sh -c "sleep 5 &&
-         npx prisma db push &&
-         npm start"
+             npx prisma db push &&
+             npm start"
+    networks:
+      - dev
 
   db:
     image: postgres
@@ -25,13 +27,18 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: mydatabase
-    # volumes:
-    #   - db_data:/var/lib/postgresql/data
+    networks:
+      - dev
 
-  frontend: # React-приложение
-    build: ../react-client # Путь к вашему React-приложению относительно корня вашего проекта
+  frontend:
+    build: ../react-client
     expose:
-      - "80" # Открыт ТОЛЬКО внутри docker-сети
+      - "80"
+    networks:
+      - dev
 
 volumes:
-  react_app: # Объявление именованного тома
+  react_app:
+
+networks:
+  dev:
