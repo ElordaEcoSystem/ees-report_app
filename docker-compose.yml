@@ -1,37 +1,72 @@
+# services:
+#   postgres:
+#     image: "postgres:latest"
+#     environment:
+#       - POSTGRES_PASSWORD=password
+#       - POSTGRES_DB=postgres
+#       - POSTGRES_USER=admin
+#   nginx:
+#     depends_on:
+#       - api
+#       - client
+#     restart: always
+#     build:
+#       dockerfile: Dockerfile.dev
+#       context: ./nginx
+#     ports:
+#       - "3050:80"
+#   api:
+#     build:
+#       dockerfile: Dockerfile.dev
+#       context: "./express_api"
+#     volumes:
+#       - /app/node_modules
+#       - ./express_api:/app
+#     environment:
+#       - DATABASE_URL=postgresql://admin:password@postgres:5432/postgres
+#     command: sh -c "npx prisma db push && npm start"
+#   client:
+#     stdin_open: true
+#     environment:
+#       - CHOKIDAR_USEPOLLING=true
+#     build:
+#       dockerfile: Dockerfile.dev
+#       context: ./react-client
+#     volumes:
+#       - /app/node_modules
+#       - ./react-client:/app
+
+
+version: '3.9'
+
 services:
   postgres:
-    image: "postgres:latest"
+    image: postgres:15
     environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=admin
-  nginx:
-    depends_on:
-      - api
-      - client
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - pg_data:/var/lib/postgresql/data
     restart: always
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./nginx
+
+  backend:
+    build: ./express_api
+    container_name: backend
+    environment:
+      DATABASE_URL: postgres://admin:password@postgres:5432/mydb
     ports:
-      - "3050:80"
-  api:
-    build:
-      dockerfile: Dockerfile.dev
-      context: "./express_api"
-    volumes:
-      - /app/node_modules
-      - ./express_api:/app
-    environment:
-      - DATABASE_URL=postgresql://admin:password@postgres:5432/postgres
-    command: sh -c "npx prisma db push && npm start"
-  client:
-    stdin_open: true
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./react-client
-    volumes:
-      - /app/node_modules
-      - ./react-client:/app
+      - "4001:5000" # 4001 - на хосте, 5000 - внутри контейнера
+    depends_on:
+      - postgres
+    restart: always
+
+  frontend:
+    build: ./react-client
+    container_name: frontend
+    ports:
+      - "4002:80" # 4002 - на хосте, 80 - внутри контейнера
+    restart: always
+
+volumes:
+  pg_data:
