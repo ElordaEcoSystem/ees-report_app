@@ -10,7 +10,6 @@ type TableProps = {
 };
 
 export const Table = ({ data, monthIndex }: TableProps) => {
-  console.log("From table monthIndex = ", monthIndex);
   const filtered = data.filter((order) => {
     const created = new Date(order.createdAt);
     return created.getMonth() === monthIndex && created.getFullYear() === 2025;

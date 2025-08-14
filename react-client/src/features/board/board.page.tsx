@@ -1,4 +1,3 @@
-import { BASE_API_URL } from "@/shared/constans";
 import { Button } from "@/shared/ui/kit/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/kit/card";
 
@@ -83,7 +82,6 @@ export function Board() {
     const url = URL.createObjectURL(blob);
     window.open(url); // откроется в новой вкладке
   };
-
   return (
     <main className="grow container mx-auto p-4 ">
       {/* Мобильная версия */}
@@ -113,7 +111,7 @@ export function Board() {
                   </div>
                   <img
                     className="mt-2"
-                    src={`${BASE_API_URL}${workLog.photoUrl}`}
+                    src={`${workLog.photoUrl}`}
                     alt=""
                   />
                 </CardContent>

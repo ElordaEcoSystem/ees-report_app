@@ -10,15 +10,27 @@ if (!fs.existsSync(tempPath)) {
   fs.mkdirSync(tempPath, { recursive: true });
 }
 
-// Настройка хранилища
+// // Настройка хранилища
+// const storage = multer.diskStorage({
+//   destination: tempPath,
+//   filename: function (req, file, cb) {
+//     const uniqueName = `${Date.now()}_${file.originalname}`;
+//     cb(null, uniqueName);
+//   },
+// });
+
+const safeFileName = (original) =>
+  `${Date.now()}_${original.replace(/[^a-zA-Z0-9.]/g, "_")}`;
+
 const storage = multer.diskStorage({
   destination: tempPath,
   filename: function (req, file, cb) {
-    const uniqueName = `${Date.now()}_${file.originalname}`;
-    cb(null, uniqueName);
+    cb(null, safeFileName(file.originalname));
   },
 });
 
 const temp = multer({ storage });
 
 module.exports = temp;
+
+

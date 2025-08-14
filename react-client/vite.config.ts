@@ -6,12 +6,19 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   build:{
-    outDir: "build",
+    outDir: "dist",
     sourcemap: true
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  server: {
+    proxy: {
+      "/api": "http://localhost:5000",
+    },
+    allowedHosts: ['client', 'localhost','api'],
+    host: true
   },
 });

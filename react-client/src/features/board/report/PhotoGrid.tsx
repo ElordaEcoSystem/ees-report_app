@@ -1,4 +1,3 @@
-import { BASE_API_URL } from "@/shared/constans";
 import { View, Image, StyleSheet } from "@react-pdf/renderer";
 const styles = StyleSheet.create({
   grid: {
@@ -25,7 +24,7 @@ export const PhotoGrid = ({ photoURLs }: PhotoGridProps) => {
   return (
     <View style={styles.grid}>
       {photoURLs.map((url, index) => (
-        <Image key={index} src={`${BASE_API_URL}${url}`} style={styles.photo} />
+        <Image key={index} src={`${url}`} style={styles.photo} />
       ))}
     </View>
   );

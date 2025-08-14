@@ -1,5 +1,5 @@
+import axios from "axios";
 import type { WorkLog } from "@/features/board/board-type";
-import { BASE_API_URL } from "../constans";
 
 type Login = {
   email: string;
@@ -7,20 +7,15 @@ type Login = {
 };
 
 export async function fetchLogin(data: Login) {
-  const response = await fetch(`${BASE_API_URL}/api/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Ошибка входа");
+  try {
+    const response = await axios.post("/api/login", data, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data; // { token, user, etc. }
+  } catch (error: any) {
+    const message = error.response?.data?.message || "Ошибка входа";
+    throw new Error(message);
   }
-
-  return await response.json(); // { token, user, etc. }
 }
 
 type PostWorkLog = {
@@ -30,53 +25,45 @@ type PostWorkLog = {
 };
 
 export async function fetchWorkLogList(): Promise<WorkLog[]> {
-  const token = localStorage.getItem("token"); // или откуда ты его хранишь
+  const token = localStorage.getItem("token");
 
   try {
-    const response = await fetch(`${BASE_API_URL}/api/worklogs`, {
-      method: "GET",
+    const response = await axios.get<WorkLog[]>("/api/worklogs", {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response);
-    if (!response.ok) {
-      const error = await response.json();
-      console.error("Ошибка при получении списка WorkLog:", error.message);
-      throw new Error(error.message);
-    }
-    const result: WorkLog[] = await response.json();
-    return result;
-  } catch (error) {
-    console.error("Ошибка запроса WorkLogs:", error);
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Ошибка при получении списка WorkLog:",
+      error.response?.data?.message
+    );
     return [];
   }
 }
 
-export const fetchCreateWorkLog = async (data: PostWorkLog) => {
+export async function fetchCreateWorkLog(data: PostWorkLog) {
   const token = localStorage.getItem("token");
   const formData = new FormData();
   formData.append("object", data.object);
   formData.append("content", data.content);
-  formData.append("photo", data.photo); // File сюда
+  formData.append("photo", data.photo);
+
   try {
-    const response = await fetch(`${BASE_API_URL}/api/worklogs`, {
-      method: "POST",
+    const response = await axios.post("/api/worklogs", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
       },
-      body: formData,
     });
-    if (!response.ok) {
-      const error = await response.json();
-      console.error("Ошибка при создание записи", error.message);
-      throw new Error(error.message);
-    }
-    const result = response.json();
-    return result;
-  } catch (error) {
-    console.error("Ошибка отправке WorkLog:", error);
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Ошибка при создании записи:",
+      error.response?.data?.message
+    );
     return {};
   }
-};
+}

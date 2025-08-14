@@ -1,23 +1,26 @@
-# Stage 1: Build React Application
-FROM node:20 AS build
+# Stage 1 — сборка React/Vite
+FROM node:20-alpine AS builder
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package*.json ./
-
+COPY package.json package-lock.json ./
 RUN npm install
 
 COPY . .
-
 RUN npm run build
 
-# Stage 2: Serve React Application with Nginx
-FROM nginx:stable-alpine
+# Stage 2 — Nginx
+FROM nginx:alpine
 
-COPY --from=build /usr/src/app/build /usr/share/nginx/html
+# Nginx слушает 80 порт
+EXPOSE 80
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Копируем конфиг Nginx
+# COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 8000
+# Копируем собранный фронт
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 3050
+CMD [ "nginx", "-g", "daemon off;" ]

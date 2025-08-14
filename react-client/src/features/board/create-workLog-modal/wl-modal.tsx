@@ -17,7 +17,6 @@ export function CreateWorkLogModal() {
     if (response) {
       close();
     }
-    console.log("Данные формы:", data);
     // тут можешь отправлять на бекенд
   };
   return (
