@@ -28,7 +28,7 @@ async function optimizeImage(filePath) {
   const tempPath = filePath + "_temp.jpg";
   await sharp(filePath)
     .resize({ width: 1080, withoutEnlargement: true })
-    .jpeg({ quality: 80, mozjpeg: true })
+    .jpeg({ quality: 50, mozjpeg: true })
     .toFile(tempPath);
 
   await fs.promises.rename(tempPath, filePath);

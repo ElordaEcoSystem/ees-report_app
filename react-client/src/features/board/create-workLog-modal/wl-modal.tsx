@@ -4,6 +4,7 @@ import { WorkLogForm } from "./wl-form";
 import { Button } from "@/shared/ui/kit/button";
 import z from "zod";
 import { fetchCreateWorkLog } from "@/shared/model/api";
+import { useState } from "react";
 const workLogSchema = z.object({
   object: z.string({ required_error: "ОБъект обязателен" }),
   content: z.string({ required_error: "Проделанная работа обязательна" }),
@@ -12,12 +13,17 @@ const workLogSchema = z.object({
 
 export function CreateWorkLogModal() {
   const { isOpen, close } = useCreateWorkLogModal();
-  const handleSubmit = async (data: z.infer<typeof workLogSchema>) => {
-    const response = await fetchCreateWorkLog(data);
-    if (response) {
-      close();
+  const [isLoading, setIsLoading] = useState(false);
+   const handleSubmit = async (data: z.infer<typeof workLogSchema>) => {
+    setIsLoading(true);
+    try {
+      const response = await fetchCreateWorkLog(data);
+      if (response) {
+        close();
+      }
+    } finally {
+      setIsLoading(false);
     }
-    // тут можешь отправлять на бекенд
   };
   return (
     <Dialog onOpenChange={close} open={isOpen}>
@@ -25,7 +31,7 @@ export function CreateWorkLogModal() {
         <DialogTitle>Фиксация работы</DialogTitle>
         <WorkLogForm
           onSubmit={handleSubmit}
-          footer={<Button type="submit">Отправить</Button>}
+          footer={<Button type="submit" disabled={isLoading}>{isLoading ? "Отправка..." : "Отправить"}</Button>}
         ></WorkLogForm>
       </DialogContent>
     </Dialog>
