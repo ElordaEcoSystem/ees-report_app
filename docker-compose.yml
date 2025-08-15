@@ -37,6 +37,40 @@
 #       - ./react-client:/app
 
 
+# version: '3.9'
+
+# services:
+#   postgres:
+#     image: postgres:15
+#     environment:
+#       POSTGRES_USER: admin
+#       POSTGRES_PASSWORD: password
+#       POSTGRES_DB: mydb
+#     volumes:
+#       - pg_data:/var/lib/postgresql/data
+#     restart: always
+
+#   backend:
+#     build: ./express_api
+#     container_name: backend
+#     environment:
+#       DATABASE_URL: postgres://admin:password@postgres:5432/mydb
+#     ports:
+#       - "4001:5000" # 4001 - на хосте, 5000 - внутри контейнера
+#     depends_on:
+#       - postgres
+#     restart: always
+
+#   frontend:
+#     build: ./react-client
+#     container_name: frontend
+#     ports:
+#       - "4002:80" # 4002 - на хосте, 80 - внутри контейнера
+#     restart: always
+
+# volumes:
+#   pg_data:
+
 version: '3.9'
 
 services:
@@ -56,17 +90,20 @@ services:
     environment:
       DATABASE_URL: postgres://admin:password@postgres:5432/mydb
     ports:
-      - "4001:5000" # 4001 - на хосте, 5000 - внутри контейнера
+      - "4001:5000"
     depends_on:
       - postgres
+    volumes:
+      - uploads_data:/app/uploads   # 📌 монтируем том в /app/uploads
     restart: always
 
   frontend:
     build: ./react-client
     container_name: frontend
     ports:
-      - "4002:80" # 4002 - на хосте, 80 - внутри контейнера
+      - "4002:80"
     restart: always
 
 volumes:
   pg_data:
+  uploads_data:   # 📌 новый том
