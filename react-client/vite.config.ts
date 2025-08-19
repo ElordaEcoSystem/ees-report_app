@@ -17,7 +17,12 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": "http://localhost:5000",
+      '/uploads': {
+        target: 'http://localhost:5000', // или адрес твоего backend
+        changeOrigin: true
+      }
     },
+    
     allowedHosts: ['client', 'localhost','api'],
     host: true
   },

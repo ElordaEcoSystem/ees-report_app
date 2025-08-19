@@ -14,13 +14,10 @@ async function convertHeicToJpeg(inputPath) {
     format: "JPEG",
     quality: 0.8,
   });
-
   const jpegPath = inputPath.replace(/\.[^/.]+$/, ".jpg");
   fs.writeFileSync(jpegPath, outputBuffer);
-
   // удаляем оригинальный HEIC
   fs.unlinkSync(inputPath);
-
   return jpegPath;
 }
 
@@ -30,13 +27,73 @@ async function optimizeImage(filePath) {
     .resize({ width: 1080, withoutEnlargement: true })
     .jpeg({ quality: 50, mozjpeg: true })
     .toFile(tempPath);
+  await fs.promises.rename(tempPath, filePath);
+}
+
+async function addWatermark(filePath, object,userName) {
+  const logoPath = path.join(__dirname, "../assets/logo.png"); // путь к логотипу
+  const fontPath = path.join(__dirname, "../assets/fonts/ArialRegular.ttf"); // твой шрифт
+  if (!fs.existsSync(logoPath)) {
+    console.warn("Логотип не найден:", logoPath);
+    return;
+  }
+    if (!fs.existsSync(fontPath)) {
+    console.warn("Шрифт не найден:", fontPath);
+    return;
+  }
+
+  const fontData = fs.readFileSync(fontPath).toString("base64");
+
+  // Получаем размеры изображения, чтобы подогнать лого и текст
+  const metadata = await sharp(filePath).metadata();
+  const imgWidth = metadata.width || 1080;
+
+  // Масштабируем лого под ширину картинки (~15% ширины)
+  const logoBuffer = await sharp(logoPath)
+    .resize(Math.floor(imgWidth * 0.2)) // 15% от ширины фото
+    .toBuffer();
+
+  // Генерируем картинку с текстом
+  const dateTime = new Date().toLocaleString("ru-RU", {
+    timeZone: "Asia/Almaty",
+  });
+
+  const svgText = `
+    <svg width="${imgWidth}" height="120" xmlns="http://www.w3.org/2000/svg">
+      <style>
+        @font-face {
+          font-family: 'CustomFont';
+          src: url('data:font/ttf;base64,${fontData}') format('truetype');
+        }
+        .line1 { fill: white; font-size: 26px; font-weight: bold; font-family: 'CustomFont'; }
+        .line2 { fill: white; font-size: 21px; font-family: 'CustomFont'; }
+      </style>
+      <rect x="0" y="0" width="100%" height="100%" fill="black" opacity="0.6"/>
+      <text x="20" y="35%" text-anchor="start" class="line1">${object}</text>
+      <text x="20" y="60%" text-anchor="start" class="line2">${userName}</text>
+      <text x="20" y="80%" text-anchor="start" class="line2">${dateTime}</text>
+    </svg>
+  `;
+
+  const textBuffer = Buffer.from(svgText);
+
+  const tempPath = filePath + "_wm.jpg";
+
+  await sharp(filePath)
+    .composite([
+      { input: logoBuffer, gravity: "northeast", blend: "over" }, // лого внизу справа
+      { input: textBuffer, gravity: "southeast", blend: "over" },     // текст снизу по центру
+    ])
+    .toFile(tempPath);
 
   await fs.promises.rename(tempPath, filePath);
 }
 
+
 const WorkLogController = {
   createWorkLog: async (req, res) => {
     const userId = req.user.userId;
+    const userName = req.user.fullName;
     const { object, content } = req.body;
 
     if (!object || !content || !req.file) {
@@ -53,6 +110,7 @@ const WorkLogController = {
 
       // Сжимаем/изменяем размер
       await optimizeImage(filePath);
+      await addWatermark(filePath,object,userName)
 
       // Получаем новое имя файла (чтобы записать в БД)
       const fileName = path.basename(filePath);
@@ -95,6 +153,15 @@ const WorkLogController = {
       return res.status(500).json({ error: "Internal server error" });
     }
   },
+  // getWorkLogImage: async (req,res) => {
+  //   const filePath = path.join(__dirname, "..", "uploads", req.params.filename);
+
+  // if (!fs.existsSync(filePath)) {
+  //   return res.status(404).json({ error: "File not found" });
+  // }
+
+  // res.sendFile(filePath);
+  // }
 };
 
 module.exports = WorkLogController;

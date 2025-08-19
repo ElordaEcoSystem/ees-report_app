@@ -77,7 +77,7 @@ export function WorkLogForm({
                     className="text-sm"
                     type="file"
                     accept="image/*"
-                    capture="environment" // <-- включает камеру заднего вида
+                    // capture="environment" // <-- включает камеру заднего вида
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       field.onChange(file); // обновляем значение формы

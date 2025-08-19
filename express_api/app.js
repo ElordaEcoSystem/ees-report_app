@@ -19,9 +19,9 @@ app.use(cookieParser());
 app.set("view engine", "jade");
 //раздавать статические файлы из папки 'uploads'
 
-// app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use("/temp", express.static("temp"));
+// app.use("/temp", express.static("temp"));
 app.use("/api", require("./routes"));
 
 if (!fs.existsSync("uploads")) {
