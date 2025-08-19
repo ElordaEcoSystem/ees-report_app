@@ -58,22 +58,18 @@ async function addWatermark(filePath, object,userName) {
     timeZone: "Asia/Almaty",
   });
 
-  const svgText = `
-    <svg width="${imgWidth}" height="120" xmlns="http://www.w3.org/2000/svg">
-      <style>
-        @font-face {
-          font-family: 'CustomFont';
-          src: url('data:font/ttf;base64,${fontData}') format('truetype');
-        }
-        .line1 { fill: white; font-size: 26px; font-weight: bold; font-family: 'CustomFont'; }
-        .line2 { fill: white; font-size: 21px; font-family: 'CustomFont'; }
-      </style>
-      <rect x="0" y="0" width="100%" height="100%" fill="black" opacity="0.6"/>
-      <text x="20" y="35%" text-anchor="start" class="line1">${object}</text>
-      <text x="20" y="60%" text-anchor="start" class="line2">${userName}</text>
-      <text x="20" y="80%" text-anchor="start" class="line2">${dateTime}</text>
-    </svg>
-  `;
+const svgText = `
+  <svg width="${imgWidth}" height="120" xmlns="http://www.w3.org/2000/svg">
+    <style>
+      .line1 { fill: white; font-size: 28px; font-weight: bold;font-family: "Consolas", "Lucida Console", monospace; }
+      .line2 { fill: white; font-size: 23px; font-family: "Consolas", "Lucida Console", monospace; }
+    </style>
+    <rect x="0" y="0" width="100%" height="100%" fill="black" opacity="0.7"/>
+    <text x="20" y="35%" text-anchor="start" class="line1">${object}</text>
+    <text x="20" y="60%" text-anchor="start" class="line2">${userName}</text>
+    <text x="20" y="80%" text-anchor="start" class="line2">${dateTime}</text>
+  </svg>
+`;
 
   const textBuffer = Buffer.from(svgText);
 
