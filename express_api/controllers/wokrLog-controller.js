@@ -62,8 +62,8 @@ async function addWatermark(filePath, object,userName) {
   const svgText = `
     <svg width="${imgWidth}" height="${fontSize*6}" xmlns="http://www.w3.org/2000/svg">
       <style>
-        .line1 { fill: white; font-size: ${fontSize*1.3}px; font-weight: bold;font-family: "Consolas", "Lucida Console", monospace; }
-        .line2 { fill: white; font-size: ${fontSize}px; font-family: "Consolas", "Lucida Console", monospace; }
+        .line1 { fill: white; font-size: ${fontSize*1.3}px; font-weight: bold;font-family: Arial, sans-serif; }
+        .line2 { fill: white; font-size: ${fontSize}px; font-family: Arial, sans-serif; }
       </style>
       <rect x="0" y="0" width="100%" height="100%" fill="black" opacity="0.7"/>
       <text x="30" y="35%" text-anchor="start" class="line1">${object}</text>
