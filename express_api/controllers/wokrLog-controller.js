@@ -42,12 +42,10 @@ async function addWatermark(filePath, object,userName) {
     return;
   }
 
-  const fontData = fs.readFileSync(fontPath).toString("base64");
-
   // Получаем размеры изображения, чтобы подогнать лого и текст
   const metadata = await sharp(filePath).metadata();
   const imgWidth = metadata.width || 1080;
-
+  const imgHeight = metadata.height || 1350;
   // Масштабируем лого под ширину картинки (~15% ширины)
   const logoBuffer = await sharp(logoPath)
     .resize(Math.floor(imgWidth * 0.2)) // 15% от ширины фото
@@ -57,19 +55,22 @@ async function addWatermark(filePath, object,userName) {
   const dateTime = new Date().toLocaleString("ru-RU", {
     timeZone: "Asia/Almaty",
   });
+  
 
-const svgText = `
-  <svg width="${imgWidth}" height="120" xmlns="http://www.w3.org/2000/svg">
-    <style>
-      .line1 { fill: white; font-size: 28px; font-weight: bold;font-family: "Consolas", "Lucida Console", monospace; }
-      .line2 { fill: white; font-size: 23px; font-family: "Consolas", "Lucida Console", monospace; }
-    </style>
-    <rect x="0" y="0" width="100%" height="100%" fill="black" opacity="0.7"/>
-    <text x="20" y="35%" text-anchor="start" class="line1">${object}</text>
-    <text x="20" y="60%" text-anchor="start" class="line2">${userName}</text>
-    <text x="20" y="80%" text-anchor="start" class="line2">${dateTime}</text>
-  </svg>
-`;
+  let fontSize = Math.floor(imgWidth * 0.035);
+  
+  const svgText = `
+    <svg width="${imgWidth}" height="${fontSize*6}" xmlns="http://www.w3.org/2000/svg">
+      <style>
+        .line1 { fill: white; font-size: ${fontSize*1.3}px; font-weight: bold;font-family: "Consolas", "Lucida Console", monospace; }
+        .line2 { fill: white; font-size: ${fontSize}px; font-family: "Consolas", "Lucida Console", monospace; }
+      </style>
+      <rect x="0" y="0" width="100%" height="100%" fill="black" opacity="0.7"/>
+      <text x="30" y="35%" text-anchor="start" class="line1">${object}</text>
+      <text x="30" y="60%" text-anchor="start" class="line2">${userName}</text>
+      <text x="30" y="80%" text-anchor="start" class="line2">${dateTime}</text>
+    </svg>
+  `;
 
   const textBuffer = Buffer.from(svgText);
 
