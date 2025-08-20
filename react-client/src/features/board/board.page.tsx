@@ -29,12 +29,19 @@ import {
 } from "@/shared/ui/kit/select";
 import { monthNames } from "@/shared/model/months";
 import type { WorkLog } from "./board-type";
+import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/kit/dialog";
 
 type TokenPayload = {
   userId: string;
   email: string;
   fullName: string; // если backend возвращает имя под таким ключом
 };
+
+
+
+
+
+
 
 export function Board() {
   const {
@@ -44,6 +51,12 @@ export function Board() {
     setSelectedMonth,
     currentUser,
     selectedMonth,
+    closeImage,
+    openImage,
+    isOpenImage,
+    imageUrl,
+    setImageUrl
+
   } = useBoard();
   const CreateWorkLog = useCreateWorkLogModal();
 
@@ -82,10 +95,27 @@ export function Board() {
     const url = URL.createObjectURL(blob);
     window.open(url); // откроется в новой вкладке
   };
+
+  const ImageDialog = () => {
+
+    return (
+      <Dialog onOpenChange={closeImage} open={isOpenImage}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogTitle>Фиксация работы</DialogTitle>
+            <img src={imageUrl} alt="" loading="lazy"></img>
+        </DialogContent>
+      </Dialog>
+          )
+
+  }
+
   return (
     <main className="grow container mx-auto p-4 ">
       {/* Мобильная версия */}
       <CreateWorkLogModal />
+      <ImageDialog />
+
+
 
       <div className="sm:hidden flex flex-col ">
         <div className="flex flex-col gap-4">
@@ -169,6 +199,8 @@ export function Board() {
               <TableHead>Исполнитель</TableHead>
               <TableHead>Объект</TableHead>
               <TableHead>Проделанная работа</TableHead>
+              <TableHead>Фото</TableHead>
+              
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -180,6 +212,8 @@ export function Board() {
                 <TableCell>{workLog.author.fullName}</TableCell>
                 <TableCell>{workLog.object}</TableCell>
                 <TableCell>{workLog.content}</TableCell>
+                <TableCell className="w-20 h-20"><button onClick={()=>{openImage(workLog.photoUrl)}}>
+                  <img src={workLog.photoUrl} alt="" loading="lazy"/></button></TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -189,4 +223,7 @@ export function Board() {
   );
 }
 
+
 export const Component = Board;
+
+

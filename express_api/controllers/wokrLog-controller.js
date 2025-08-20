@@ -65,7 +65,7 @@ async function addWatermark(filePath, object,userName) {
         .line1 { fill: white; font-size: ${fontSize*1.3}px; font-weight: bold;font-family: Arial, sans-serif; }
         .line2 { fill: white; font-size: ${fontSize}px; font-family: Arial, sans-serif; }
       </style>
-      <rect x="0" y="0" width="100%" height="100%" fill="black" opacity="0.7"/>
+      <rect x="0" y="0" width="100%" height="100%" fill="black" opacity="0.1"/>
       <text x="30" y="35%" text-anchor="start" class="line1">${object}</text>
       <text x="30" y="60%" text-anchor="start" class="line2">${userName}</text>
       <text x="30" y="80%" text-anchor="start" class="line2">${dateTime}</text>
