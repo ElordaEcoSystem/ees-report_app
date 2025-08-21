@@ -55,8 +55,6 @@ export function Board() {
     openImage,
     isOpenImage,
     imageUrl,
-    setImageUrl
-
   } = useBoard();
   const CreateWorkLog = useCreateWorkLogModal();
 
@@ -99,10 +97,10 @@ export function Board() {
   const ImageDialog = () => {
 
     return (
-      <Dialog onOpenChange={closeImage} open={isOpenImage}>
+      <Dialog onOpenChange={closeImage} open={isOpenImage} >
         <DialogContent className="sm:max-w-[425px]">
           <DialogTitle>Фиксация работы</DialogTitle>
-            <img src={imageUrl} alt="" loading="lazy"></img>
+            <img src={imageUrl} className="rounded-md" alt="" loading="lazy"></img>
         </DialogContent>
       </Dialog>
           )
@@ -212,8 +210,8 @@ export function Board() {
                 <TableCell>{workLog.author.fullName}</TableCell>
                 <TableCell>{workLog.object}</TableCell>
                 <TableCell>{workLog.content}</TableCell>
-                <TableCell className="w-20 h-20"><button onClick={()=>{openImage(workLog.photoUrl)}}>
-                  <img src={workLog.photoUrl} alt="" loading="lazy"/></button></TableCell>
+                <TableCell onClick={()=>{openImage(workLog.photoUrl)}} className="w-20 h-20">
+                  <img src={workLog.photoUrl} className=" rounded-md hover:scale-110 cursor-pointer duration-200 ease-in-out"  alt="" loading="lazy"/></TableCell>
               </TableRow>
             ))}
           </TableBody>
