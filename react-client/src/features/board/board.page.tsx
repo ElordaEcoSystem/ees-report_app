@@ -210,8 +210,8 @@ export function Board() {
                 <TableCell>{workLog.author.fullName}</TableCell>
                 <TableCell>{workLog.object}</TableCell>
                 <TableCell>{workLog.content}</TableCell>
-                <TableCell onClick={()=>{openImage(workLog.photoUrl)}} className="w-20 h-20">
-                  <img src={workLog.photoUrl} className=" rounded-md hover:scale-110 cursor-pointer duration-200 ease-in-out"  alt="" loading="lazy"/></TableCell>
+                <TableCell onClick={()=>{openImage(workLog.photoUrl)}} className="w-20 h-20 overflow-hidden">
+                  <img src={workLog.photoUrl} className="w-full h-full object-cover rounded-md hover:scale-110 cursor-pointer duration-200 ease-in-out"    alt="" loading="lazy"/></TableCell>
               </TableRow>
             ))}
           </TableBody>
