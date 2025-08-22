@@ -2,7 +2,7 @@ const sharp = require("sharp");
 const convert = require("heic-convert");
 const fs = require("fs");
 const path = require("path");
-const { createCanvas } = require("canvas");
+const { createCanvas } = require("@napi-rs/canvas");
 
 async function convertHeicToJpeg(inputPath) {
   // Если файл .heic → конвертируем в jpg
