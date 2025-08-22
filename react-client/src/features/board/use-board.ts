@@ -25,12 +25,6 @@ export const useBoard = createGStore(() => {
   };
   const closeImage = () => setIsOpenImage(false);
 
-
-
-
-
-
-
   return {
     workLogList,
     setWorkLogList,

@@ -112,9 +112,7 @@ export function Board() {
       {/* Мобильная версия */}
       <CreateWorkLogModal />
       <ImageDialog />
-
-
-
+      
       <div className="sm:hidden flex flex-col ">
         <div className="flex flex-col gap-4">
           {filteredWL.map((workLog) => {
