@@ -15,9 +15,35 @@
 
 # EXPOSE 5000
 
+#----------------------------------------------------
 
+# FROM node:20-slim
+
+# RUN apt-get update && apt-get install -y \
+#     build-essential \
+#     python3 \
+#     libvips-dev \
+#     && rm -rf /var/lib/apt/lists/*
+
+# WORKDIR /app
+
+# COPY package*.json ./
+# RUN npm install
+
+# COPY prisma ./prisma
+# RUN npx prisma generate
+
+# COPY . .
+
+# EXPOSE 5000
+
+# CMD ["npm", "start"]
+
+
+#-----------------------------------------
 FROM node:20-slim
 
+# Устанавливаем всё нужное для сборки sharp
 RUN apt-get update && apt-get install -y \
     build-essential \
     python3 \
@@ -27,7 +53,9 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+
+# ВАЖНО: пересобираем sharp из исходников
+RUN npm install --build-from-source=sharp
 
 COPY prisma ./prisma
 RUN npx prisma generate
