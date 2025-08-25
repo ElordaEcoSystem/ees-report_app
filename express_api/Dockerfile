@@ -1,19 +1,19 @@
-# FROM node:20.19.3-alpine
+FROM node:20.19.3-alpine
 
-# WORKDIR /app
+WORKDIR /app
 
-# # Копируем package.json и устанавливаем зависимости
-# COPY package*.json ./
-# RUN npm install
+# Копируем package.json и устанавливаем зависимости
+COPY package*.json ./
+RUN npm install
 
-# # Копируем схему Prisma и генерируем клиент
-# COPY prisma ./prisma
-# RUN npx prisma generate
+# Копируем схему Prisma и генерируем клиент
+COPY prisma ./prisma
+RUN npx prisma generate
 
-# # Копируем остальной код приложения
-# COPY . .
+# Копируем остальной код приложения
+COPY . .
 
-# EXPOSE 5000
+EXPOSE 5000
 
 #----------------------------------------------------
 
@@ -40,28 +40,4 @@
 # CMD ["npm", "start"]
 
 
-#-----------------------------------------
-FROM node:20-slim
 
-# Устанавливаем всё нужное для сборки sharp
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    python3 \
-    python3-pip \
-    libvips-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci --build-from-source=sharp
-
-
-COPY prisma ./prisma
-RUN npx prisma generate
-
-COPY . .
-
-EXPOSE 5000
-
-CMD ["npm", "start"]
