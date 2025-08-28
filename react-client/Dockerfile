@@ -47,8 +47,8 @@ RUN npm install
 COPY . .
 
 ENV NODE_OPTIONS=--max-old-space-size=1024
-# RUN npm run build
-RUN npm run build -- --maxWorkers=2
+RUN npm run build
+# RUN npm run build -- --maxWorkers=2
 
 FROM nginx:stable-alpine
 COPY --from=build /app/dist /usr/share/nginx/html
