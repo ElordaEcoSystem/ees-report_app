@@ -5,6 +5,7 @@ import { Button } from "@/shared/ui/kit/button";
 import z from "zod";
 import { fetchCreateWorkLog } from "@/shared/model/api";
 import { useState } from "react";
+import { resizeImageFile } from "@/shared/model/compressPhoto";
 const workLogSchema = z.object({
   object: z.string({ required_error: "ОБъект обязателен" }),
   content: z.string({ required_error: "Проделанная работа обязательна" }),
@@ -17,7 +18,10 @@ export function CreateWorkLogModal() {
    const handleSubmit = async (data: z.infer<typeof workLogSchema>) => {
     setIsLoading(true);
     try {
-      const response = await fetchCreateWorkLog(data);
+      const resizedPhoto = await resizeImageFile(data.photo);
+      const response = await fetchCreateWorkLog({...data,photo:resizedPhoto});
+      // const response = await fetchCreateWorkLog(data);
+
       if (response) {
         close();
       }
