@@ -1,4 +1,4 @@
-FROM node:20.19.3-alpine
+FROM node:20.19.3-slim
 RUN npm install -g npm@11
 
 WORKDIR /app

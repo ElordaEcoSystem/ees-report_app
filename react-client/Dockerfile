@@ -38,7 +38,7 @@
 # EXPOSE 80
 
 
-FROM node:20-alpine AS build
+FROM node:20-slim AS build
 RUN npm install -g npm@11
 
 WORKDIR /app
