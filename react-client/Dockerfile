@@ -39,12 +39,16 @@
 
 
 FROM node:20-alpine AS build
+RUN npm install -g npm@11
 
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+
+ENV NODE_OPTIONS=--max-old-space-size=1024
+# RUN npm run build
+RUN npm run build -- --maxWorkers=2
 
 FROM nginx:stable-alpine
 COPY --from=build /app/dist /usr/share/nginx/html

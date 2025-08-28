@@ -1,4 +1,5 @@
 FROM node:20.19.3-alpine
+RUN npm install -g npm@11
 
 WORKDIR /app
 
