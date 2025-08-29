@@ -1,4 +1,5 @@
-FROM node:20.19.3-slim
+# FROM node:20.19.3-slim
+FROM node:20.19.3
 RUN npm install -g npm@11
 
 WORKDIR /app
@@ -6,6 +7,7 @@ WORKDIR /app
 # Копируем package.json и устанавливаем зависимости
 COPY package*.json ./
 RUN npm install
+RUN npm install --os=linux --cpu=x64 sharp --build-from-source
 
 # Копируем схему Prisma и генерируем клиент
 COPY prisma ./prisma
