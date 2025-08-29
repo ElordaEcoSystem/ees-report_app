@@ -1,7 +1,7 @@
 const { prisma } = require("../../prisma/prisma-client");
 const fs = require("fs");
 const path = require("path");
-// const {optimizeImage,addWatermark} = require("./workLog-service")
+const {addWatermark} = require("./workLog-service")
 
 const uploadDir = path.join(__dirname, "../../uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -20,8 +20,7 @@ const WorkLogController = {
       let filePath = path.join(uploadDir, req.file.filename);
 
       // Сжимаем/изменяем размер
-      // filePath = await optimizeImage(filePath);
-      // await addWatermark(filePath,object,userName)
+      await addWatermark(filePath,object,userName)
 
       // Получаем новое имя файла (чтобы записать в БД)
       const fileName = path.basename(filePath);

@@ -5,10 +5,10 @@ export const resizeImageFile = (file: File): Promise<File> => {
   return new Promise((resolve) => {
     Resizer.imageFileResizer(
       file,
-      800,   // ширина (px)
-      800,   // высота (px)
+      1080,   // ширина (px)
+      1080,   // высота (px)
       "JPEG", // формат
-      80,    // качество
+      70,    // качество
       0,     // поворот
       (uri) => {
         // Преобразуем base64 обратно в File
