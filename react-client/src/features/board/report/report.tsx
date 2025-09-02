@@ -79,6 +79,15 @@ type Props = {
   currentUserName: string | undefined;
 };
 
+const concordants = [
+  {post:"Заместитель генерального директора",fullName:"А. Жагипаров"},
+  {post:"Руководитель СЭОС",fullName:"Б. Шаймуханбетов"},
+  {post:"Руководителя СЭНС",fullName:"Т. Козгумбаев"},
+  {post:"Инженер АСУТП",fullName:"К. Есмухамбетов "},
+  {post:"Инженер АСУТП",fullName:"Т. Жамантаев "},
+  {post:"Инженер АСУТП",fullName:"А. Тютюньков "},
+]
+
 export const Report = ({ monthIndex, workLogList, currentUserName }: Props) => {
   const date = new Date(2025, monthIndex);
   const numberOfDays = getDaysInMonth(date);
@@ -124,9 +133,22 @@ export const Report = ({ monthIndex, workLogList, currentUserName }: Props) => {
             был выполнен ряд задач, связанных с диагностикой, сборкой,
             подключением и настройкой различных элементов насосных установок.
           </Text>
+
         </View>
 
         <Table data={workLogList} monthIndex={monthIndex} />
+        <View>
+          <Text  style={[styles.coordinating_text, styles.text_bold]}>Акт составлен и подписан членами комиссии:</Text>
+        </View>
+        {concordants.map((concordant)=>{
+          return (
+            <View style={[styles.coordinating_text, styles.text_bold]}>
+              <Text>{concordant.post}</Text>
+              <Text>{concordant.fullName}</Text>
+            </View>
+          )
+        })}
+
         <PhotoGrid photoURLs={allPhotos} />
       </Page>
     </Document>

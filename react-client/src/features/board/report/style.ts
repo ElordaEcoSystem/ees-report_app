@@ -59,6 +59,13 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 14,
   },
+    coordinating_text: {
+    display: "flex",
+    flexDirection: "row",
+    paddingHorizontal: 40,
+    justifyContent: "space-between",
+    marginTop: 14,
+  },
   //table
   table: {
     borderWidth: 1,
