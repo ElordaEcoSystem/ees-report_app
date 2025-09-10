@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/kit/select";
-import { monthNames } from "@/shared/model/months";
+// import { monthNames } from "@/shared/model/months";
 import type { WorkLog,Filters } from "./board-type";
 import { useWLModal, WLModal } from "./wl-modal";
 

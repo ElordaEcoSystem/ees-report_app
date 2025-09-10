@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/kit/dialog"
+import { Dialog, DialogContent } from "@/shared/ui/kit/dialog"
 import { useWLModal } from "./use-wl-modal"
 // import { boolean } from "zod"
 
