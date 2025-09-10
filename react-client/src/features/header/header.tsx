@@ -11,7 +11,8 @@ export function AppHeader() {
   return (
     <div className="w-full min-h-[30px] border-b  flex items-center sticky top-0 bg-white z-50">
       <div className="container flex mx-auto py-2 px-4">
-        <div className="flex items-center font-bold text-2xl">EES</div>
+        <div className="flex items-center font-bold text-2xl">EES <span  className="text-green-600 font-normal">&nbsp; /СИТиАС</span></div>
+        {/* <div className="flex items-center font-bold text-2xl">EES </div> */}
         <Button className="ml-auto" onClick={() => handleLogout()}>
           Выйти
         </Button>

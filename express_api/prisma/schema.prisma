@@ -13,37 +13,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// enum Role {
-//   EXECUTOR
-//   ADMIN
-// }
+enum Role {
+  EXECUTOR
+  CUSTOMER
+  ADMIN
+  OBSERVER
+}
 
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   fullName  String?
   password  String
-  // role      Role     @default(EXECUTOR)
+  role      Role     @default(EXECUTOR)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  workLogs  WorkLog[]
-  // groups    UserGroup[]
+  workLogs      WorkLog[] @relation("AuthorWorkLogs") // как автор
+  executingLogs WorkLog[] @relation("ExecutorsOnLogs") // как исполнитель
 }
 
 model WorkLog {
-  id        String   @id @default(uuid())
-  object    String
-  content   String
-  photoUrl  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  objectType String?
+  object     String
+  content    String
+  photoUrl   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id])
+  authorId String
+  author   User   @relation("AuthorWorkLogs", fields: [authorId], references: [id])
+
+  executors User[] @relation("ExecutorsOnLogs") // исполнители
 }
-
-
 
 // model Group {
 //   id        String       @id @default(uuid())
@@ -64,6 +67,3 @@ model WorkLog {
 
 //   @@unique([userId, groupId]) // Один пользователь не может быть в одной группе дважды
 // }
-
-
-

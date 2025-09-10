@@ -28,8 +28,8 @@ import {
   SelectValue,
 } from "@/shared/ui/kit/select";
 import { monthNames } from "@/shared/model/months";
-import type { WorkLog } from "./board-type";
-import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/kit/dialog";
+import type { WorkLog,Filters } from "./board-type";
+import { useWLModal, WLModal } from "./wl-modal";
 
 type TokenPayload = {
   userId: string;
@@ -41,7 +41,24 @@ type TokenPayload = {
 
 
 
+const objectTypeSelectItems = ["Все","НС","ОС"];
 
+const monthSelectItems = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+    "Все",
+
+]
 
 export function Board() {
   const {
@@ -51,12 +68,13 @@ export function Board() {
     setSelectedMonth,
     currentUser,
     selectedMonth,
-    closeImage,
-    openImage,
-    isOpenImage,
-    imageUrl,
+    selectedObjectType,
+    setSelectedObjectType
   } = useBoard();
+
+  
   const CreateWorkLog = useCreateWorkLogModal();
+  const WorkLogModal = useWLModal()
 
   useEffect(() => {
     async function loadWorkLogs() {
@@ -72,16 +90,29 @@ export function Board() {
     loadWorkLogs();
   }, []);
 
-  let filteredWL: WorkLog[];
-  if (selectedMonth) {
-    filteredWL = workLogList.filter(
-      (workLog) =>
-        new Date(workLog.createdAt).getMonth() === Number(selectedMonth)
-    );
-  } else {
-    filteredWL = workLogList;
-  }
+  function applyFilters(workLogs: WorkLog[], filters: Filters): WorkLog[] {
+    return workLogs.filter((workLog) => {
+      let pass = true;
+    // фильтр по месяцу
+    if (filters.month !== undefined && filters.month !== 12 &&  !Number.isNaN(filters.month)) {
+      const logMonth = new Date(workLog.createdAt).getMonth();
+      if (logMonth !== filters.month) pass = false;
+    }
 
+    // фильтр по типу объекта
+    if (filters.objectType && filters.objectType !== "Все") {
+      if (workLog.objectType !== filters.objectType) pass = false;
+    }
+      return pass;
+    });
+  }
+  const filters: Filters = {
+  month: Number(selectedMonth),
+  objectType: selectedObjectType,
+  };
+  console.log(filters)
+
+  const filteredWL = applyFilters(workLogList, filters);
   const handleOpenPdf = async () => {
     const blob = await pdf(
       <Report
@@ -94,24 +125,13 @@ export function Board() {
     window.open(url); // откроется в новой вкладке
   };
 
-  const ImageDialog = () => {
 
-    return (
-      <Dialog onOpenChange={closeImage} open={isOpenImage} >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogTitle>Фиксация работы</DialogTitle>
-            <img src={imageUrl} className="rounded-md" alt="" loading="lazy"></img>
-        </DialogContent>
-      </Dialog>
-          )
-
-  }
 
   return (
     <main className="grow container mx-auto p-4 ">
       {/* Мобильная версия */}
       <CreateWorkLogModal />
-      <ImageDialog />
+      <WLModal />
       
       <div className="sm:hidden flex flex-col ">
         <div className="flex flex-col gap-4">
@@ -170,10 +190,28 @@ export function Board() {
                 <SelectValue placeholder="Месяц" />
               </SelectTrigger>
               <SelectContent>
-                {monthNames.genitive.map((month, i) => {
+                {monthSelectItems.map((month, i) => {
                   return (
                     <SelectItem key={month} value={String(i)}>
                       {month}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+            <Select
+              onValueChange={(value) => {
+                setSelectedObjectType(value);
+              }}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Тип объекта" />
+              </SelectTrigger>
+              <SelectContent>
+                {objectTypeSelectItems.map((item) => {
+                  return (
+                    <SelectItem key={item} value={item}>
+                      {item}
                     </SelectItem>
                   );
                 })}
@@ -193,6 +231,7 @@ export function Board() {
             <TableRow>
               <TableHead>Дата</TableHead>
               <TableHead>Исполнитель</TableHead>
+              <TableHead>Тип объекта</TableHead>
               <TableHead>Объект</TableHead>
               <TableHead>Проделанная работа</TableHead>
               <TableHead>Фото</TableHead>
@@ -200,18 +239,23 @@ export function Board() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredWL.map((workLog) => (
-              <TableRow key={workLog.id}>
+            {filteredWL.map((workLog) => {
+              console.log(workLog)
+              return (
+              // <TableRow key={workLog.id} onClick={()=>{WorkLogModal.open(workLog.photoUrl)}} >
+              <TableRow key={workLog.id} onClick={()=>{WorkLogModal.open(workLog)}} >
                 <TableCell className="font-medium">
                   {new Date(workLog.createdAt).toLocaleDateString("ru-RU")}
                 </TableCell>
                 <TableCell>{workLog.author.fullName}</TableCell>
+                <TableCell>{workLog.objectType ?? ' - '}</TableCell>
                 <TableCell>{workLog.object}</TableCell>
                 <TableCell>{workLog.content}</TableCell>
-                <TableCell onClick={()=>{openImage(workLog.photoUrl)}} className="w-20 h-20 overflow-hidden">
-                  <img src={workLog.photoUrl} className="w-full h-full object-cover rounded-md hover:scale-110 cursor-pointer duration-200 ease-in-out"    alt="" loading="lazy"/></TableCell>
+                <TableCell className="w-20 h-20 overflow-hidden">
+                  <img src={workLog.photoUrl} className="w-full h-full object-cover rounded-md  duration-200 ease-in-out"    alt="" loading="lazy"/></TableCell>
               </TableRow>
-            ))}
+              )
+            })}
           </TableBody>
         </Table>
       </div>

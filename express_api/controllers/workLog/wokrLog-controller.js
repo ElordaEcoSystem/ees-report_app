@@ -8,11 +8,13 @@ if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const WorkLogController = {
   createWorkLog: async (req, res) => {
+    console.log("BODY:", req.body);   // 👈 здесь должны быть строки
+    console.log("FILE:", req.file);   // 👈 здесь будет фото
     const userId = req.user.userId;
     const userName = req.user.fullName;
-    const { object, content } = req.body;
+    const { object, content, objectType } = req.body;
 
-    if (!object || !content || !req.file) {
+    if (!object || !content || !objectType || !req.file) {
       return res.status(400).json({ error: "Все поля обязательны" });
     }
 
@@ -29,6 +31,7 @@ const WorkLogController = {
       const workLog = await prisma.workLog.create({
         data: {
           object,
+          objectType,
           content,
           photoUrl,
           authorId: userId,

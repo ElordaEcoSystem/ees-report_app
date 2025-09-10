@@ -19,6 +19,7 @@ export async function fetchLogin(data: Login) {
 }
 
 type PostWorkLog = {
+  objectType:string
   object: string;
   content: string;
   photo: File;
@@ -47,6 +48,7 @@ export async function fetchWorkLogList(): Promise<WorkLog[]> {
 export async function fetchCreateWorkLog(data: PostWorkLog) {
   const token = localStorage.getItem("token");
   const formData = new FormData();
+  formData.append("objectType", data.objectType);
   formData.append("object", data.object);
   formData.append("content", data.content);
   formData.append("photo", data.photo);
@@ -55,7 +57,7 @@ export async function fetchCreateWorkLog(data: PostWorkLog) {
     const response = await axios.post("/api/worklogs", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
+        // "Content-Type": "multipart/form-data",
       },
     });
     return response.data;

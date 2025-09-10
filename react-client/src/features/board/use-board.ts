@@ -14,16 +14,7 @@ export const useBoard = createGStore(() => {
   const [workLogList, setWorkLogList] = useState<WorkLog[]>([]);
   const [currentUser, setCurrentUser] = useState<TokenPayload | undefined>();
   const [selectedMonth, setSelectedMonth] = useState<number>();
-  const [isOpenImage, setIsOpenImage] = useState(false);
-  const [imageUrl,setImageUrl] = useState<string>("")
-
-  const openImage = (url:string) => {
-    return (
-      setIsOpenImage(true),
-      setImageUrl(url)
-    )
-  };
-  const closeImage = () => setIsOpenImage(false);
+  const [selectedObjectType, setSelectedObjectType] = useState<string>();
 
   return {
     workLogList,
@@ -32,10 +23,7 @@ export const useBoard = createGStore(() => {
     setCurrentUser,
     selectedMonth,
     setSelectedMonth,
-    isOpenImage,
-    openImage,
-    closeImage,
-    imageUrl,
-    setImageUrl
+    selectedObjectType,
+    setSelectedObjectType
   };
 });
