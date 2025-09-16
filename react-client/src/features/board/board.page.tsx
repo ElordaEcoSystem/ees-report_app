@@ -110,7 +110,7 @@ export function Board() {
   month: Number(selectedMonth),
   objectType: selectedObjectType,
   };
-  console.log(filters)
+  // console.log(filters)
 
   const filteredWL = applyFilters(workLogList, filters);
   const handleOpenPdf = async () => {
@@ -240,7 +240,7 @@ export function Board() {
           </TableHeader>
           <TableBody>
             {filteredWL.map((workLog) => {
-              console.log(workLog)
+              // console.log(workLog)
               return (
               // <TableRow key={workLog.id} onClick={()=>{WorkLogModal.open(workLog.photoUrl)}} >
               <TableRow key={workLog.id} onClick={()=>{WorkLogModal.open(workLog)}} >

@@ -115,7 +115,7 @@ import { Textarea } from "@/shared/ui/kit/textarea";
 import { Button } from "@/shared/ui/kit/button";
 
 const workLogSchema = z.object({
-  objectType: z.enum(["НС", "ОС"], { required_error: "Тип обязателен" }), // 👈 добавляем тип
+  objectType: z.enum(["НС", "БКНС","ОС"], { required_error: "Тип обязателен" }), // 👈 добавляем тип
   object: z.string({ required_error: "ОБъект обязателен" }),
   content: z.string({ required_error: "Проделанная работа обязательна" }),
   photo: z.instanceof(File),
@@ -160,6 +160,14 @@ export function WorkLogForm({
                     onClick={() => field.onChange("НС")}
                   >
                     НС
+                  </Button>
+                  <Button
+                    type="button"
+                    className={`h-12 flex-1 py-3 text-xl font-bold rounded-md border   transition-colors duration-300
+                      ${field.value === "БКНС" ? "bg-green-600 text-white" : "bg-gray-100 text-black"}`}
+                    onClick={() => field.onChange("БКНС")}
+                  >
+                    БКНС
                   </Button>
                   <Button
                     type="button"

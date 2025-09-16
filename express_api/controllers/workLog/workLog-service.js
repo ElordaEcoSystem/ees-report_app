@@ -34,7 +34,7 @@ const { createCanvas } = require("@napi-rs/canvas");
 //   return filePath; // <-- вернули новый путь!
 // }
 
-async function addWatermark(filePath, object,userName) {
+async function addWatermark(filePath, objectType,object,userName) {
   const logoPath = path.join(__dirname, "../../assets/logo.png"); // путь к логотипу
 //   const fontPath = path.join(__dirname, "../../assets/fonts/ArialRegular.ttf"); // твой шрифт
   if (!fs.existsSync(logoPath)) {
@@ -88,7 +88,8 @@ async function addWatermark(filePath, object,userName) {
 
   // Заголовок (больше)
   ctx.font = `${headerFont}px Arial`;
-  ctx.fillText(object, paddingX, currentY);
+  const text = objectType + ' ' + object; 
+  ctx.fillText(text, paddingX, currentY);
 
   currentY += headerFont*1.2 ;
 

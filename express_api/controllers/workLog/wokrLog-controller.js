@@ -22,7 +22,7 @@ const WorkLogController = {
       let filePath = path.join(uploadDir, req.file.filename);
 
       // Сжимаем/изменяем размер
-      await addWatermark(filePath,object,userName)
+      await addWatermark(filePath,objectType,object,userName)
 
       // Получаем новое имя файла (чтобы записать в БД)
       const fileName = path.basename(filePath);
