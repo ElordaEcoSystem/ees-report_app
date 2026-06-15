@@ -15,55 +15,59 @@ datasource db {
 
 enum Role {
   EXECUTOR
+  MANAGER
   CUSTOMER
   ADMIN
   OBSERVER
 }
 
+enum RecordType {
+  WORK
+  DEFECT
+  INSTALLATION
+}
+
+model Department {
+  id       String    @id @default(uuid())
+  code     String    @unique
+  name     String
+  users    User[]
+  workLogs WorkLog[]
+}
+
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  fullName  String?
-  password  String
-  role      Role     @default(EXECUTOR)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String      @id @default(uuid())
+  email        String      @unique
+  fullName     String?
+  position     String?
+  password     String
+  role         Role        @default(EXECUTOR)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
 
   workLogs      WorkLog[] @relation("AuthorWorkLogs") // как автор
   executingLogs WorkLog[] @relation("ExecutorsOnLogs") // как исполнитель
 }
 
 model WorkLog {
-  id         String   @id @default(uuid())
-  objectType String?
-  object     String
-  content    String
-  photoUrl   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              String     @id @default(uuid())
+  objectType      String?
+  recordType      RecordType @default(WORK)
+  object          String
+  content         String
+  photoUrls       String[]
+  beforePhotoUrls String[]
+  extraFields     Json       @default("{}")
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 
-  authorId String
-  author   User   @relation("AuthorWorkLogs", fields: [authorId], references: [id])
+  authorId     String
+  author       User        @relation("AuthorWorkLogs", fields: [authorId], references: [id])
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
 
   executors User[] @relation("ExecutorsOnLogs") // исполнители
 }
 
-// model Group {
-//   id        String       @id @default(uuid())
-//   name      String
-//   createdAt DateTime     @default(now())
-
-//   members   UserGroup[]
-// }
-
-// model UserGroup {
-//   id        String   @id @default(uuid())
-//   userId    String
-//   groupId   String
-//   joinedAt  DateTime @default(now())
-
-//   user      User     @relation(fields: [userId], references: [id])
-//   group     Group    @relation(fields: [groupId], references: [id])
-
-//   @@unique([userId, groupId]) // Один пользователь не может быть в одной группе дважды
-// }

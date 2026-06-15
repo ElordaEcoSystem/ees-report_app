@@ -13,6 +13,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
 import { fetchLogin } from "@/shared/model/api";
+import { useState } from "react";
 
 const loginSchema = z.object({
   email: z
@@ -26,23 +27,27 @@ const loginSchema = z.object({
 export function LoginForm() {
   const form = useForm({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = form.handleSubmit(async (data) => {
+    setError(null);
+    setLoading(true);
     try {
       const response = await fetchLogin(data);
       localStorage.setItem("token", response.token);
       navigate("/board");
-      throw new Error("ouch!");
-    } catch (error) {
-      console.error("Ошибка входа:", error);
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+      setError(msg ?? "Ошибка входа. Попробуйте снова.");
+    } finally {
+      setLoading(false);
     }
   });
+
   return (
     <Form {...form}>
       <form className="flex flex-col gap-4 w-full" onSubmit={onSubmit}>
@@ -72,7 +77,10 @@ export function LoginForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Войти</Button>
+        {error && (
+          <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">{error}</p>
+        )}
+        <Button type="submit" disabled={loading}>{loading ? "Вход..." : "Войти"}</Button>
       </form>
     </Form>
   );

@@ -18,12 +18,15 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
 app.set("view engine", "jade");
+app.set("etag", false);
 //раздавать статические файлы из папки 'uploads'
 
-app.use("/uploads", express.static("uploads"));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // app.use("/temp", express.static("temp"));
-app.use("/api", require("./routes"));
+app.use("/api", (req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+}, require("./routes"));
 
 if (!fs.existsSync("uploads")) {
   fs.mkdirSync("uploads");

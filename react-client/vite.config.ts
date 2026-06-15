@@ -16,9 +16,9 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": "http://localhost:5000",
+      "/api": "http://localhost:4001",
       '/uploads': {
-        target: 'http://localhost:5000', // или адрес твоего backend
+        target: 'http://localhost:4001',
         changeOrigin: true
       }
     },

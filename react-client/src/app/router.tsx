@@ -1,40 +1,12 @@
-// import { createBrowserRouter, redirect } from "react-router";
-// import App from "./App";
-// import { ROUTES } from "@/shared/model/routes";
-
-// export const router = createBrowserRouter([
-//   {
-//     element: (
-//       // <Providers>
-//       <App />
-//     ),
-//     children: [
-//       {
-//         path: ROUTES.LOGIN,
-//         lazy: () => import("@/features/auth/login.page"),
-//       },
-//       {
-//         path: ROUTES.HOME,
-//         loader: () => redirect(ROUTES.BOARD),
-//       },
-//       {
-//         path: ROUTES.BOARD,
-//         lazy: () => import("@/features/board/board.page"),
-//       },
-//     ],
-//   },
-// ]);
-
-// routes.ts
-import { createBrowserRouter, redirect } from "react-router"; // ← убедись, что dom, не core
+import { createBrowserRouter, redirect } from "react-router";
 import App from "./App";
 import { ROUTES } from "@/shared/model/routes";
 import { AppHeader } from "@/features/header";
 import { Board } from "@/features/board/board.page";
+import { AdminPage } from "@/features/admin/admin.page";
+import { fetchCurrentUser } from "@/shared/model/api";
 
-const isAuthenticated = () => {
-  return localStorage.getItem("token"); // или sessionStorage
-};
+const getToken = () => localStorage.getItem("token");
 
 export const router = createBrowserRouter([
   {
@@ -43,9 +15,7 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.LOGIN,
         loader: () => {
-          if (isAuthenticated()) {
-            return redirect(ROUTES.BOARD);
-          }
+          if (getToken()) return redirect(ROUTES.BOARD);
           return null;
         },
         lazy: () => import("@/features/auth/login.page"),
@@ -57,9 +27,7 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.BOARD,
         loader: () => {
-          if (!isAuthenticated()) {
-            return redirect(ROUTES.LOGIN);
-          }
+          if (!getToken()) return redirect(ROUTES.LOGIN);
           return null;
         },
         element: (
@@ -68,7 +36,27 @@ export const router = createBrowserRouter([
             <Board />
           </>
         ),
-        // lazy: () => import("@/features/board/board.page"),
+      },
+      {
+        path: ROUTES.ADMIN,
+        loader: async () => {
+          if (!getToken()) return redirect(ROUTES.LOGIN);
+          try {
+            const user = await fetchCurrentUser();
+            if (user.role !== "ADMIN") return redirect(ROUTES.BOARD);
+          } catch {
+            // Token invalid or expired — force re-auth
+            localStorage.removeItem("token");
+            return redirect(ROUTES.LOGIN);
+          }
+          return null;
+        },
+        element: (
+          <>
+            <AppHeader />
+            <AdminPage />
+          </>
+        ),
       },
     ],
   },

@@ -1,0 +1,24 @@
+services:
+  backend:
+    image: elordaeco/ees-backend:latest
+    container_name: backend
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      SECRET_KEY: ${SECRET_KEY}
+    ports:
+      - "127.0.0.1:4001:5000"
+    volumes:
+      - uploads_data:/app/uploads
+    restart: always
+
+  frontend:
+    image: elordaeco/ees-frontend:latest
+    container_name: frontend
+    ports:
+      - "127.0.0.1:4002:80"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  uploads_data:

@@ -1,7 +1,5 @@
 import { Font, StyleSheet } from "@react-pdf/renderer";
 
-// timesnrcyrmt.ttf
-
 Font.register({
   family: "TimesNewRoman",
   fonts: [
@@ -13,14 +11,13 @@ export const styles = StyleSheet.create({
   text: {
     fontFamily: "TimesNewRoman",
     fontSize: 12,
-    //  letterSpacing: 0.2,
   },
   text_bold: {
     fontWeight: 600,
   },
   page: {
     backgroundColor: "#fff",
-    paddingLeft: 56,
+    paddingLeft: 28,
     paddingTop: 28,
     paddingRight: 28,
     paddingBottom: 28,
@@ -59,7 +56,7 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 14,
   },
-    coordinating_text: {
+  coordinating_text: {
     display: "flex",
     flexDirection: "row",
     paddingHorizontal: 40,
@@ -69,7 +66,6 @@ export const styles = StyleSheet.create({
   //table
   table: {
     borderWidth: 1,
-    // border borderColor: '#000',
   },
   tableRow: {
     flexDirection: "row",
@@ -87,11 +83,10 @@ export const styles = StyleSheet.create({
   },
   lastCell: {
     borderRightWidth: 0,
+    flex: 3
   },
   indexCell: {
-    flex: 0.5,
-    // padding: 4,
-    // borderRight: '1px solid #000',
+    flex: 0.3,
     textAlign: "center",
   },
 });
