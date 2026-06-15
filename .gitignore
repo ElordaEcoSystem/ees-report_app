@@ -1,1 +1,31 @@
-docker-compose.yml
+# Secrets
+.env
+.env.local
+.env.production
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+react-client/dist/
+react-client/.vite/
+
+# Uploads (user files, not code)
+express_api/uploads/*
+!express_api/uploads/.gitkeep
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Docker archives (локальные файлы для переноса образов)
+*.tar.gz
