@@ -125,11 +125,40 @@ const emergency: DepartmentConfig = {
   ],
 };
 
+// ─── Энергетический участок ───────────────────────────────────────────────────
+const energy: DepartmentConfig = {
+  code: "energy",
+  name: "Энергетический участок",
+  fields: [
+    {
+      key: "objectType",
+      label: "Тип объекта",
+      type: "select",
+      storageKey: "objectType",
+      options: ["НС", "БКНС", "ОС"],
+      required: true,
+      showInList: true,
+      showInPdf: false,
+    },
+    {
+      key: "object",
+      label: "Объект",
+      type: "text",
+      storageKey: "object",
+      required: true,
+      showInList: true,
+      showInPdf: true,
+      pdfWidth: 95,
+    },
+  ],
+};
+
 // ─── Реестр ──────────────────────────────────────────────────────────────────
 export const DEPARTMENT_REGISTRY: Record<string, DepartmentConfig> = {
   asutP,
   exploitation,
   emergency,
+  energy,
 };
 
 /** Fallback-конфиг для пользователей без отдела (совместимость) */

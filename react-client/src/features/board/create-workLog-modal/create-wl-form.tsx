@@ -47,7 +47,7 @@ function buildSchema(config: DepartmentConfig) {
 
   return z.object({
     recordType: z.enum(["WORK", "DEFECT", "INSTALLATION"], { required_error: "Тип записи обязателен" }),
-    workType: z.string().optional(),
+    workType: z.string().min(1, "Вид работ обязателен"),
     content: z.string().min(1, "Описание обязательно"),
     photos: z.array(z.instanceof(File)).min(1, "Выберите хотя бы одно фото"),
     beforePhotos: z.array(z.instanceof(File)).optional(),
