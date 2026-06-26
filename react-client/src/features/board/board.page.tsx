@@ -81,6 +81,70 @@ const recordTypeBadge: Record<string, string> = {
   INSTALLATION: "bg-blue-100 text-blue-800",
 };
 
+const SWIPE_THRESHOLD = 40;
+
+function MobilePhotoSwiper({ photoUrls, beforePhotoUrls = [] }: { photoUrls: string[]; beforePhotoUrls?: string[] }) {
+  const hasBefore = beforePhotoUrls.length > 0;
+  const [tab, setTab] = useState<"before" | "after">("before");
+  const urls = hasBefore ? (tab === "before" ? beforePhotoUrls : photoUrls) : photoUrls;
+
+  const [idx, setIdx] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+
+  useEffect(() => { setIdx(0); }, [tab]);
+
+  if (urls.length === 0) return null;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (delta > SWIPE_THRESHOLD) setIdx((i) => Math.max(0, i - 1));
+    else if (delta < -SWIPE_THRESHOLD) setIdx((i) => Math.min(urls.length - 1, i + 1));
+    touchStartX.current = null;
+  };
+
+  return (
+    <div className="mt-2">
+      {hasBefore && (
+        <div className="flex gap-1 mb-1">
+          <button
+            type="button"
+            className={`px-3 py-1 text-xs rounded-md border ${tab === "before" ? "bg-gray-800 text-white" : "bg-gray-100 text-black"}`}
+            onClick={() => setTab("before")}
+          >
+            До
+          </button>
+          <button
+            type="button"
+            className={`px-3 py-1 text-xs rounded-md border ${tab === "after" ? "bg-gray-800 text-white" : "bg-gray-100 text-black"}`}
+            onClick={() => setTab("after")}
+          >
+            После
+          </button>
+        </div>
+      )}
+      <div className="relative">
+        <img
+          className="w-full select-none touch-pan-y"
+          src={urls[idx]}
+          alt=""
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        />
+        {urls.length > 1 && (
+          <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
+            {idx + 1} / {urls.length}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 type MultiSelectFilterProps = {
   label: string;
   options: { value: string; label: string }[];
@@ -380,9 +444,7 @@ export function Board() {
                   </div>
                 </div>
                 <div className="break-words">{workLog.content}</div>
-                {workLog.photoUrls.length > 0 && (
-                  <img className="mt-2 w-full" src={workLog.photoUrls[workLog.photoUrls.length - 1]} alt="" />
-                )}
+                <MobilePhotoSwiper photoUrls={workLog.photoUrls} beforePhotoUrls={workLog.beforePhotoUrls} />
               </CardContent>
             </Card>
           ))}

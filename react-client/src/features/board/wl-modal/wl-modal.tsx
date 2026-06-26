@@ -1,23 +1,45 @@
 import { Dialog, DialogContent } from "@/shared/ui/kit/dialog";
 import { useWLModal } from "./use-wl-modal";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, type TouchEvent } from "react";
+
+const SWIPE_THRESHOLD = 40;
 
 function Carousel({ urls }: { urls: string[] }) {
   const [idx, setIdx] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+
   if (urls.length === 0) return null;
+
+  const goPrev = () => setIdx((i) => Math.max(0, i - 1));
+  const goNext = () => setIdx((i) => Math.min(urls.length - 1, i + 1));
+
+  const handleTouchStart = (e: TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (delta > SWIPE_THRESHOLD) goPrev();
+    else if (delta < -SWIPE_THRESHOLD) goNext();
+    touchStartX.current = null;
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <img
         src={urls[idx]}
-        className="rounded-2xl w-full object-contain max-h-[55vh]"
+        className="rounded-2xl w-full object-contain max-h-[55vh] select-none touch-pan-y"
         alt=""
         loading="lazy"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       />
       {urls.length > 1 && (
         <div className="flex items-center justify-center gap-3 text-sm">
           <button
             className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 disabled:opacity-30 flex items-center justify-center text-lg"
-            onClick={() => setIdx((i) => Math.max(0, i - 1))}
+            onClick={goPrev}
             disabled={idx === 0}
           >
             ‹
@@ -25,7 +47,7 @@ function Carousel({ urls }: { urls: string[] }) {
           <span className="text-gray-500">{idx + 1} / {urls.length}</span>
           <button
             className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 disabled:opacity-30 flex items-center justify-center text-lg"
-            onClick={() => setIdx((i) => Math.min(urls.length - 1, i + 1))}
+            onClick={goNext}
             disabled={idx === urls.length - 1}
           >
             ›
@@ -38,9 +60,9 @@ function Carousel({ urls }: { urls: string[] }) {
 
 export const WLModal = () => {
   const { isOpenWL, close, WLData } = useWLModal();
-  const [tab, setTab] = useState<"after" | "before">("after");
+  const [tab, setTab] = useState<"before" | "after">("before");
 
-  useEffect(() => { setTab("after"); }, [WLData?.id]);
+  useEffect(() => { setTab("before"); }, [WLData?.id]);
 
   const hasBefore = (WLData?.beforePhotoUrls?.length ?? 0) > 0;
 
@@ -72,25 +94,25 @@ export const WLModal = () => {
             {hasBefore && (
               <div className="flex gap-1 border rounded-lg p-1 w-fit">
                 <button
-                  className={`px-4 py-1.5 text-sm rounded-md transition-colors ${tab === "after" ? "bg-gray-800 text-white" : "hover:bg-gray-100"}`}
-                  onClick={() => setTab("after")}
-                >
-                  После
-                </button>
-                <button
                   className={`px-4 py-1.5 text-sm rounded-md transition-colors ${tab === "before" ? "bg-gray-800 text-white" : "hover:bg-gray-100"}`}
                   onClick={() => setTab("before")}
                 >
                   До
                 </button>
+                <button
+                  className={`px-4 py-1.5 text-sm rounded-md transition-colors ${tab === "after" ? "bg-gray-800 text-white" : "hover:bg-gray-100"}`}
+                  onClick={() => setTab("after")}
+                >
+                  После
+                </button>
               </div>
             )}
             {hasBefore ? (
               tab === "after"
-                ? <Carousel urls={WLData?.photoUrls ?? []} />
-                : <Carousel urls={WLData?.beforePhotoUrls ?? []} />
+                ? <Carousel key="after" urls={WLData?.photoUrls ?? []} />
+                : <Carousel key="before" urls={WLData?.beforePhotoUrls ?? []} />
             ) : (
-              <Carousel urls={WLData?.photoUrls ?? []} />
+              <Carousel key="single" urls={WLData?.photoUrls ?? []} />
             )}
           </div>
         </div>
