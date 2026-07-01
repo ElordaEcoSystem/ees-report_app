@@ -40,7 +40,11 @@ app.use(function (req, res, next) {
 
 // Обработка ошибок в API
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  if (err.name === 'MulterError') {
+    console.error(`MulterError [${err.code}] field="${err.field}" url=${req.originalUrl}`);
+  } else {
+    console.error(err.stack);
+  }
   // Если запрос был к API, отдаём JSON
   if (req.originalUrl.startsWith('/api')) {
     return res.status(500).json({ error: err.message });
